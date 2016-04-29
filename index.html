@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>MediaIQTest</title>
+    <link rel="stylesheet" href="assests/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assests/css/main.css">
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4">
+                <form class="form-signin">
+                    <h2 class="form-signin-heading">Search</h2>
+                    <label for="inputEmail" class="sr-only">Movies</label>
+                    <input type="text" id="inputMovies" class="form-control" placeholder="Movie search" required="" autofocus="">
+                    <select class="form-control" id="filter">
+                        <option>Action</option>
+                        <option>Drama</option>
+                        <option>Crime</option>
+                        <option>Mystry</option>
+                        <option>Sci-fi</option>
+                        <option>Adventure</option>
+                    </select>
+                </form>
+            </div>
+            <div class="col-sm-8">
+                <div class="results">
+                    <div class="item">
+                        <h3 class="title"></h3>
+                        <img class="poster" alt="poster">
+                        <h5 class="year"></h5>
+                        <h5 class="genere"></h5>
+                        <h5 class="director"></h5>
+                        <h5 class="actors"></h5>
+                        <h5 class="plot"></h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="assests/js/jquery.min.js"></script>
+    <script src="assests/js/jquery-ui.min.js"></script>
+    <script src="assests/js/bootstrap.min.js"></script>
+    <script src="assests/js/main.js"></script>
+</body>
+
+</html>
