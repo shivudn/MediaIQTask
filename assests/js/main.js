@@ -1,6 +1,8 @@
  var serverData = [],
      getStarRating;
  $(function () {
+
+     //Search auto-complete event
      $("#inputMovies").autocomplete({
          source: function (request, response) {
              $.ajax({
@@ -27,6 +29,9 @@
                  $.each(moviesdata, function (i, item) {
                      if (moviesdata[i].Title == $("#inputMovies").val()) {
                          isMoviePresent = true;
+                         $(".item-row").html("");
+                         showData();
+                         $("#filter").val('All');
                          return false;
                      } else {
                          isMoviePresent = false;
@@ -43,6 +48,7 @@
          }
      });
 
+     //getData for ajax call
      var getData = function () {
          var title = "";
          $.ajax({
@@ -82,6 +88,7 @@
          });
      }
 
+     //showData to show all local-storage data
      var showData = function () {
          if (localStorage.getItem("movies")) {
              moviesdata = JSON.parse(localStorage.getItem('movies'));
@@ -90,12 +97,14 @@
                      moviesdata[i].Poster = "assests/img/no-poster-img.png";
                  }
                  var starStr = getStarRating(moviesdata[i].imdbRating);
-                 var str = "<div class='col-xs-12 col-sm-4'><div class='item' onclick='itemClick(\"" + moviesdata[i].Title + "\")'><h3 class='title'>" + moviesdata[i].Title + "</h3><img class='poster' alt='poster' src=" + moviesdata[i].Poster + ">" + starStr + "<h5 class='year'><span>Year :</span>" + moviesdata[i].Year + "</h5><h5 class='genere'><span>Genre :</span>" + moviesdata[i].Genre + "</h5><h5 class='director'><span>Director: </span>" + moviesdata[i].Director + "</h5><h5 class='actors'><span>Actors :</span>" + moviesdata[i].Actors + "</h5><h5 class='plot'><span>Plot :</span>"
-                 moviesdata[i].Plot + "</h5></div></div>";
+                 var str = "<div class='col-xs-12 col-sm-6 col-md-4 col-lg-4'><div class='item' onclick='itemClick(\"" + moviesdata[i].Title + "\")'><h3 class='title'>" + moviesdata[i].Title + "</h3><img class='poster' alt='poster' src=" + moviesdata[i].Poster + ">" + starStr + "<h5 class='year'><span>Year :</span>" + moviesdata[i].Year + "</h5><h5 class='genere'><span>Genre :</span>" + moviesdata[i].Genre + "</h5><h5 class='director'><span>Director: </span>" + moviesdata[i].Director + "</h5><h5 class='actors'><span>Actors :</span>" + moviesdata[i].Actors + "</h5><h5 class='plot'><span>Plot :</span>" +
+                     moviesdata[i].Plot + "</h5></div></div>";
                  $(".item-row").append(str);
              }
          }
      };
+
+     //showItem to show specific item data
      var showItem = function (title) {
          if (localStorage.getItem("movies")) {
              serverData = JSON.parse(localStorage.getItem('movies'));
@@ -105,66 +114,74 @@
                  }
                  var starStr = getStarRating(serverData[i].imdbRating);
                  if (serverData[i].Title == title) {
-                     var str = "<div class='col-xs-12 col-sm-4'><div class='item' onclick='itemClick(\"" + serverData[i].Title + "\")'><h3 class='title'>" + serverData[i].Title + "</h3><img class='poster' alt='poster' src=" + serverData[i].Poster + ">" + starStr + "<h5 class='year'><span>Year :</span>" + serverData[i].Year + "</h5><h5 class='genere'><span>Genre :</span>" + serverData[i].Genre + "</h5><h5 class='director'><span>Director: </span>" + serverData[i].Director + "</h5><h5 class='actors'><span>Actors :</span>" + serverData[i].Actors + "</h5><h5 class='plot'><span>Plot :</span>"
-                     serverData[i].Plot + "</h5></div></div>";
+                     var str = "<div class='col-xs-12 col-sm-6 col-md-4 col-lg-4'><div class='item' onclick='itemClick(\"" + serverData[i].Title + "\")'><h3 class='title'>" + serverData[i].Title + "</h3><img class='poster' alt='poster' src=" + serverData[i].Poster + ">" + starStr + "<h5 class='year'><span>Year :</span>" + serverData[i].Year + "</h5><h5 class='genere'><span>Genre :</span>" + serverData[i].Genre + "</h5><h5 class='director'><span>Director: </span>" + serverData[i].Director + "</h5><h5 class='actors'><span>Actors :</span>" + serverData[i].Actors + "</h5><h5 class='plot'><span>Plot :</span>" +
+                         serverData[i].Plot + "</h5></div></div>";
                      $(".item-row").append(str);
                  }
              });
          }
      };
+
+     //filter event based on select value
      $('#filter').on('change', function () {
          var moviesData, genreObj = {},
              selectedVal = this.value;
          $(".item-row").html("");
-         if (localStorage.getItem("movies")) {
-             moviesData = JSON.parse(localStorage.getItem('movies'));
-             $.each(moviesData, function (i, item) {
-                 var genre = moviesData[i].Genre.split(",");
-                 for (var j = 0; j < genre.length; j++) {
-                     if (genre[j].trim() == selectedVal) {
-                         genreObj.title = moviesData[i].Title;
-                         genreObj.value = genre[j].trim();
-                         switch (genreObj.value) {
-                         case "Action":
-                             {
-                                 showItem(genreObj.title);
-                                 break;
+         if (selectedVal !== "All") {
+             if (localStorage.getItem("movies")) {
+                 moviesData = JSON.parse(localStorage.getItem('movies'));
+                 $.each(moviesData, function (i, item) {
+                     var genre = moviesData[i].Genre.split(",");
+                     for (var j = 0; j < genre.length; j++) {
+                         if (genre[j].trim() == selectedVal) {
+                             genreObj.title = moviesData[i].Title;
+                             genreObj.value = genre[j].trim();
+                             switch (genreObj.value) {
+                             case "Action":
+                                 {
+                                     showItem(genreObj.title);
+                                     break;
+                                 }
+                             case "Adventure":
+                                 {
+                                     showItem(genreObj.title);
+                                     break;
+                                 }
+                             case "Crime":
+                                 {
+                                     showItem(genreObj.title);
+                                     break;
+                                 }
+                             case "Drama":
+                                 {
+                                     showItem(genreObj.title);
+                                     break;
+                                 }
+                             case "Mystry":
+                                 {
+                                     showItem(genreObj.title);
+                                     break;
+                                 }
+                             case "Sci-fi":
+                                 {
+                                     showItem(genreObj.title);
+                                     break;
+                                 }
                              }
-                         case "Adventure":
-                             {
-                                 showItem(genreObj.title);
-                                 break;
-                             }
-                         case "Crime":
-                             {
-                                 showItem(genreObj.title);
-                                 break;
-                             }
-                         case "Drama":
-                             {
-                                 showItem(genreObj.title);
-                                 break;
-                             }
-                         case "Mystry":
-                             {
-                                 showItem(genreObj.title);
-                                 break;
-                             }
-                         case "Sci-fi":
-                             {
-                                 showItem(genreObj.title);
-                                 break;
-                             }
+                         } else {
+                             genreObj.title = "";
+                             genreObj.value = "";
                          }
-                     } else {
-                         genreObj.title = "";
-                         genreObj.value = "";
                      }
-                 }
 
-             });
+                 });
+             }
+         } else {
+             showData();
          }
      });
+
+     //modal overlay saving-data on save click
      $("#modal-save").click(function () {
          if (localStorage.getItem("movies")) {
              var moviesData = JSON.parse(localStorage.getItem('movies'));
@@ -183,6 +200,8 @@
              $("#edit-modal").modal("hide");
          }
      });
+
+     //modal overlay reset-data on reset click
      $("#modal-reset").click(function () {
          if (localStorage.getItem("movies")) {
              var moviesData = JSON.parse(localStorage.getItem('movies'));
@@ -197,29 +216,40 @@
              });
          }
      });
+
+     //clear search-box
+     $(".fa-close").click(function () {
+         $("#inputMovies").val('');
+     });
+
+     //function convert IMDB ratings to stars
      getStarRating = function (starRating) {
          var starStr = "";
-         starRating = starRating / 2;
-         if (starRating <= 0.5) {
-             starStr = "<div class='wporg-ratings'><span class='dashicons dashicons-star-half'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span></div>";
-         } else if (starRating > 0.5 && starRating <= 1) {
-             starStr = "<div class='wporg-ratings'><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span></div>";
-         } else if (starRating > 1 && starRating <= 1.5) {
-             starStr = "<div class='wporg-ratings'><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-half'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span></div>";
-         } else if (starRating > 1.5 && starRating <= 2) {
-             starStr = "<div class='wporg-ratings'><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span></div>";
-         } else if (starRating > 2 && starRating <= 2.5) {
-             starStr = "<div class='wporg-ratings'><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-half'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span></div>";
-         } else if (starRating > 2.5 && starRating <= 3) {
-             starStr = "<div class='wporg-ratings'><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span></div>";
-         } else if (starRating > 3 && starRating <= 3.5) {
-             starStr = "<div class='wporg-ratings'><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-half'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span></div>";
-         } else if (starRating > 3.5 && starRating <= 4) {
-             starStr = "<div class='wporg-ratings'><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span></div>";
-         } else if (starRating > 4 && starRating <= 4.5) {
-             starStr = "<div class='wporg-ratings'><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-half'></span></div>";
-         } else if (starRating > 4.5 && starRating <= 5) {
-             starStr = "<div class='wporg-ratings'><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span></div>";
+         if (starRating == "N/A") {
+             starStr = "<div class='wporg-ratings'><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span></div>";
+         } else {
+             starRating = starRating / 2;
+             if (starRating <= 0.5) {
+                 starStr = "<div class='wporg-ratings'><span class='dashicons dashicons-star-half'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span></div>";
+             } else if (starRating > 0.5 && starRating <= 1) {
+                 starStr = "<div class='wporg-ratings'><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span></div>";
+             } else if (starRating > 1 && starRating <= 1.5) {
+                 starStr = "<div class='wporg-ratings'><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-half'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span></div>";
+             } else if (starRating > 1.5 && starRating <= 2) {
+                 starStr = "<div class='wporg-ratings'><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span></div>";
+             } else if (starRating > 2 && starRating <= 2.5) {
+                 starStr = "<div class='wporg-ratings'><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-half'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span></div>";
+             } else if (starRating > 2.5 && starRating <= 3) {
+                 starStr = "<div class='wporg-ratings'><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span></div>";
+             } else if (starRating > 3 && starRating <= 3.5) {
+                 starStr = "<div class='wporg-ratings'><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-half'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span></div>";
+             } else if (starRating > 3.5 && starRating <= 4) {
+                 starStr = "<div class='wporg-ratings'><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled dashicons-grey'></span></div>";
+             } else if (starRating > 4 && starRating <= 4.5) {
+                 starStr = "<div class='wporg-ratings'><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-half'></span></div>";
+             } else if (starRating > 4.5 && starRating <= 5) {
+                 starStr = "<div class='wporg-ratings'><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span><span class='dashicons dashicons-star-filled'></span></div>";
+             }
          }
          return starStr;
      }
@@ -227,6 +257,7 @@
      showData();
  });
 
+ //handlling the item click for each item
  var itemClick = function (title) {
      if (localStorage.getItem("movies")) {
          var moviesData = JSON.parse(localStorage.getItem('movies'));
