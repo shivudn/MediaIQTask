@@ -44,7 +44,16 @@
              } else {
                  getData();
              }
+             return false;
+         }
+     });
 
+     //right-key press value selection 
+     $('#inputMovies').keydown(function (e) {
+         if (e.keyCode == 39) {
+             e.preventDefault();
+             $("#inputMovies").data("ui-autocomplete")._trigger("select");
+             $(".ui-menu-item").hide();
          }
      });
 
@@ -83,7 +92,6 @@
                      localStorage.setItem('movies', JSON.stringify(serverData));
                      showData();
                  }
-                 $("#inputMovies").val("");
              }
          });
      }
